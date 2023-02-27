@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+        <div id="user-info">
+            <p id="name"></p>
+            <p id="last-activity"></p>
+            <ul id="posts"></ul>
+        </div>
+        <label for="post-input">Post: </label>
+        <input type="text" id="post-input">
+        <button id="create-post-btn">Create Post</button>
+        <button id="delete-post-btn">Delete Last Post</button>
+        <!-- <div id="user-info">
+          <p id="name"></p>
+          <p id="last-activity"></p>
+          <ul id="posts"></ul>
+        </div>
+        <button id="create-post-btn">Create Post</button>
+        <button id="delete-post-btn">Delete Last Post</button> -->
+        <!-- <script src="./userActiveLastTime.js"></script> -->
+        <script>
+            const user = {
+                name: "John Doe",
+                lastActivityTime: null,
+                posts: [],
+            };
+
+            function createPost(post) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        user.posts.push(post);
+                        resolve();
+                    }, 1000);
+                });
+            }
+
+            function updateLastUserActivityTime() {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        user.lastActivityTime = new Date();
+                        resolve();
+                    }, 1000);
+                });
+            }
+
+            function deleteLastPost() {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        user.posts.pop();
+                        resolve();
+                    }, 1000);
+                });
+            }
+
+            async function updateAndDeletePosts() {
+                const postInput = document.getElementById("post-input");
+                const post = postInput.value;
+                postInput.value = "";
+                try {
+                    await Promise.all([createPost(post), updateLastUserActivityTime()]);
+                    updateUI();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            function updateUI() {
+                const nameElement = document.getElementById("name");
+                const lastActivityElement = document.getElementById("last-activity");
+                const postsElement = document.getElementById("posts");
+
+                nameElement.textContent = `Name: ${user.name}`;
+                lastActivityElement.textContent = `Last Activity Time: ${user.lastActivityTime}`;
+                postsElement.innerHTML = "";
+
+                user.posts.forEach((post) => {
+                    const li = document.createElement("li");
+                    li.textContent = post;
+                    postsElement.appendChild(li);
+                });
+            }
+
+            function setupEventListeners() {
+                const createPostButton = document.getElementById("create-post-btn");
+                const deletePostButton = document.getElementById("delete-post-btn");
+
+                createPostButton.addEventListener("click", async () => {
+                    await updateAndDeletePosts();
+                });
+
+                deletePostButton.addEventListener("click", async () => {
+                    await deleteLastPost();
+                    updateUI();
+                });
+            }
+
+            function init() {
+                updateUI();
+                setupEventListeners();
+            }
+
+            init();
+        </script>
+</body>
+
+</html>
