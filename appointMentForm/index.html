@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Appointment Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1>Appointment Form</h1>
+        <form>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="appointments-table">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Check if there are any appointments saved in local storage
+        let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+
+        // Function to render the appointments table
+        function renderAppointments() {
+            let table = $('#appointments-table');
+            table.empty(); // Clear the table before rendering
+
+            // Loop through each appointment and add it to the table
+            appointments.forEach(function (appointment, index) {
+                let tr = $('<tr>');
+                tr.append($('<td>').text(appointment.name));
+                tr.append($('<td>').text(appointment.email));
+                tr.append($('<td>').append(
+                    $('<button>').addClass('btn btn-sm btn-primary mr-2').text('Edit').click(function () {
+                        // Populate the input fields with the appointment data
+                        $('#name').val(appointment.name);
+                        $('#email').val(appointment.email);
+
+                        // Remove the appointment from the appointments array
+                        appointments.splice(index, 1);
+
+                        // Update the local storage with the new appointments array
+                        localStorage.setItem('appointments', JSON.stringify(appointments));
+
+                        // Re-render the appointments table
+                        renderAppointments();
+                    }),
+                    $('<button>').addClass('btn btn-sm btn-danger').text('Delete').click(function () {
+                        // Remove the appointment from the appointments array
+                        appointments.splice(index, 1);
+
+                        // Update the local storage with the new appointments array
+                        localStorage.setItem('appointments', JSON.stringify(appointments));
+
+                        // Re-render the appointments table
+                        renderAppointments();
+                    })
+                ));
+                table.append(tr);
+            });
+        }
+
+        // Render the appointments table on page load
+        renderAppointments();
+
+        // Add a submit event listener to the form
+        $('form').submit(function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the values from the input fields
+
+            let name = $('#name').val();
+            let email = $('#email').val();
+
+            // Create a new appointment object
+            let appointment = {
+                name: name,
+                email: email
+            };
+
+            // Add the new appointment to the appointments array
+            appointments.push(appointment);
+
+            // Update the local storage with the new appointments array
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+
+            // Clear the input fields
+            $('#name').val('');
+            $('#email').val('');
+
+            // Re-render the appointments table
+            renderAppointments();
+        });
+    </script>
+</body>
+
+</html>
