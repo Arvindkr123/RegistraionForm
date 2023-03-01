@@ -2,106 +2,124 @@
 <html>
 
 <head>
-    <title>Appointment Form</title>
+    <title>Appointment App</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h1>Appointment Form</h1>
+    <div class="container mt-5 bg-light">
+        <h1>Appointment App</h1>
         <form>
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                <input type="text" id="name" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                <input type="email" id="email" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" required>
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Add Appointment</button>
         </form>
-
-        <table class="table mt-5">
+        <table class="table mt-3">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Phone Number</th>
-                    <th>Action</th>
+                    <th>Phone</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody id="appointments-table">
             </tbody>
         </table>
     </div>
-
     <!-- Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi4+N"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNSKtuL"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <script>
-        // Check if there are any appointments saved in local storage
+        // Get the appointments array from local storage, or initialize it to an empty array if it doesn't exist
         let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 
         // Function to render the appointments table
         function renderAppointments() {
-            let table = $('#appointments-table');
-            table.empty(); // Clear the table before rendering
-
-            // Loop through each appointment and add it to the table
+            let table = document.querySelector('#appointments-table');
+            table.innerHTML = '';
             appointments.forEach(function (appointment, index) {
-                let tr = $('<tr>');
-                tr.append($('<td>').text(appointment.name));
-                tr.append($('<td>').text(appointment.email));
-                tr.append($('<td>').text(appointment.phone));
-                tr.append($('<td>').append(
-                    $('<button>').addClass('btn btn-sm btn-primary mr-2').text('Edit').click(function () {
-                        // Populate the input fields with the appointment data
-                        $('#name').val(appointment.name);
-                        $('#email').val(appointment.email);
-                        $('#phone').val(appointment.phone);
+                let tr = document.createElement('tr');
+                let nameTd = document.createElement('td');
+                nameTd.textContent = appointment.name;
+                tr.appendChild(nameTd);
+                let emailTd = document.createElement('td');
+                emailTd.textContent = appointment.email;
+                tr.appendChild(emailTd);
+                let phoneTd = document.createElement('td');
+                phoneTd.textContent = appointment.phone;
+                tr.appendChild(phoneTd);
+                let actionsTd = document.createElement('td');
+                let editButton = document.createElement('button');
+                editButton.classList.add('btn', 'btn-primary', 'mr-2');
+                editButton.textContent = 'Edit';
+                editButton.addEventListener('click', function () {
+                    // Fill the form with the appointment data
+                    document.querySelector('#name').value = appointment.name;
+                    document.querySelector('#email').value = appointment.email;
+                    document.querySelector('#phone').value = appointment.phone;
 
-                        // Remove the appointment from the appointments array
-                        appointments.splice(index, 1);
+                    // Remove the appointment from the appointments array
+                    appointments.splice(index, 1);
 
-                        // Update the local storage with the new appointments array
-                        localStorage.setItem('appointments', JSON.stringify(appointments));
+                    // Update the appointments array in local storage
+                    localStorage.setItem('appointments', JSON.stringify(appointments));
 
-                        // Re-render the appointments table
-                        renderAppointments();
-                    }),
-                    $('<button>').addClass('btn btn-sm btn-danger').text('Delete').click(function () {
-                        // Remove the appointment from the appointments array
-                        appointments.splice(index, 1);
+                    // Render the appointments table
+                    renderAppointments();
+                });
+                actionsTd.appendChild(editButton);
+                let deleteButton = document.createElement('button');
+                deleteButton.classList.add('btn', 'btn-danger');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function () {
+                    // Remove the appointment from the appointments array
+                    appointments.splice(index, 1);
 
-                        // Update the local storage with the new appointments array
-                        localStorage.setItem('appointments', JSON.stringify(appointments));
-                        // Re-render the appointments table
-                        renderAppointments();
-                    })
-                ));
-                table.append(tr);
+                    // Update the appointments array in local storage
+                    localStorage.setItem('appointments', JSON.stringify(appointments));
+
+                    // Render the appointments table
+                    renderAppointments();
+                });
+                actionsTd.appendChild(deleteButton);
+                tr.appendChild(actionsTd);
+                table.appendChild(tr);
             });
         }
 
-        // Call the renderAppointments function when the page loads
+        // Call the renderAppointments function to initially render the appointments table
         renderAppointments();
 
-        // Add a submit event listener to the form
-        $('form').submit(function (event) {
-            event.preventDefault(); // Prevent the form from submitting
+        // Add an event listener to the form's submit button
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
 
             // Get the values from the input fields
-            let name = $('#name').val();
-            let email = $('#email').val();
-            let phone = $('#phone').val();
+            let name = document.querySelector('#name').value;
+            let email = document.querySelector('#email').value;
+            let phone = document.querySelector('#phone').value;
 
             // Create a new appointment object
             let appointment = {
@@ -110,18 +128,16 @@
                 phone: phone
             };
 
-            // Add the new appointment to the appointments array
+            // Add the appointment to the appointments array
             appointments.push(appointment);
 
-            // Update the local storage with the new appointments array
+            // Update the appointments array in local storage
             localStorage.setItem('appointments', JSON.stringify(appointments));
 
-            // Clear the input fields
-            $('#name').val('');
-            $('#email').val('');
-            $('#phone').val('');
+            // Reset the form
+            document.querySelector('form').reset();
 
-            // Re-render the appointments table
+            // Render the appointments table
             renderAppointments();
         });
     </script>
