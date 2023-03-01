@@ -21,6 +21,10 @@
                 <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
             </div>
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" required>
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 
@@ -29,6 +33,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Phone Number</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -55,11 +60,13 @@
                 let tr = $('<tr>');
                 tr.append($('<td>').text(appointment.name));
                 tr.append($('<td>').text(appointment.email));
+                tr.append($('<td>').text(appointment.phone));
                 tr.append($('<td>').append(
                     $('<button>').addClass('btn btn-sm btn-primary mr-2').text('Edit').click(function () {
                         // Populate the input fields with the appointment data
                         $('#name').val(appointment.name);
                         $('#email').val(appointment.email);
+                        $('#phone').val(appointment.phone);
 
                         // Remove the appointment from the appointments array
                         appointments.splice(index, 1);
@@ -76,7 +83,6 @@
 
                         // Update the local storage with the new appointments array
                         localStorage.setItem('appointments', JSON.stringify(appointments));
-
                         // Re-render the appointments table
                         renderAppointments();
                     })
@@ -85,22 +91,23 @@
             });
         }
 
-        // Render the appointments table on page load
+        // Call the renderAppointments function when the page loads
         renderAppointments();
 
         // Add a submit event listener to the form
         $('form').submit(function (event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault(); // Prevent the form from submitting
 
             // Get the values from the input fields
-
             let name = $('#name').val();
             let email = $('#email').val();
+            let phone = $('#phone').val();
 
             // Create a new appointment object
             let appointment = {
                 name: name,
-                email: email
+                email: email,
+                phone: phone
             };
 
             // Add the new appointment to the appointments array
@@ -112,6 +119,7 @@
             // Clear the input fields
             $('#name').val('');
             $('#email').val('');
+            $('#phone').val('');
 
             // Re-render the appointments table
             renderAppointments();
