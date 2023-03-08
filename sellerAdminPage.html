@@ -22,27 +22,42 @@
             </div>
             <input type="submit" value="Add product" class="btn btn-primary">
         </form>
-        <div class="container mt-2">
+        <!-- <div class="container mt-2">
             <ul class="list-group">
             </ul>
-        </div>
+        </div> -->
+        <div class="table-responsive table-bordered bg-light my-3">
+            <table class="table">
+                <thead>
+                    <td>Price</td>
+                    <td>Product Name</td>
+                    <td>Action</td>
+                </thead>
+                <tbody class="tbody">
+                    
+                </tbody>
+            </table>
+          </div>
         <div class="container" id="total-price">
         </div>
     </div>
     <script>
-        const apiUrl = 'https://crudcrud.com/api/0da6aa43ee9d40dba2d9f8169ecbd462/SalesProduct';
+        const apiUrl = 'https://crudcrud.com/api/ae1164821bd04d509da36562c5fa43e7/SalesProduct';
         var totalPrice = 0; // Define totalPrice in the global scope
 
         function getData() {
             axios.get(apiUrl)
                 .then(response => {
-                    const list = document.querySelector('.list-group');
-                    list.innerHTML = '';
+                    const tbody = document.querySelector('.tbody');
+                    tbody.innerHTML = '';
                     totalPrice = 0; // Reset totalPrice before updating it based on the current list of items
                     response.data.forEach(item => {
-                        list.innerHTML += `<li class="list-group-item">${item.price}</li>
-                            <li class="list-group-item">${item.product}</li>
-                            <button class="btn btn-info" onclick='deleteItem("${item._id}")'>delete Product</button>`;
+                        tbody.innerHTML+=`<td>${item.price}</td>
+                                         <td>${item.product}</td>
+                                         <td><button class="btn btn-success" onclick='deleteItem("${item._id}")'>delete Product</button></td>`
+                        // list.innerHTML += `<li class="list-group-item mt-3 bg-dark text-white">${item.price}</li>
+                        //     <li class="list-group-item mt-3 bg-dark text-white">${item.product}</li>
+                        //     <button class="btn btn-info mt-3" onclick='deleteItem("${item._id}")'>delete Product</button>`;
                         totalPrice += parseInt(item.price);
                     });
                     document.getElementById('total-price').innerHTML = `<h2>Total Product Price ${totalPrice}</h2>`;
