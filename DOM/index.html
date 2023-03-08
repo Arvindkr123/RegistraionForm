@@ -9,7 +9,7 @@
 
     <script>
         // Define the URL for the CRUD API
-        const apiUrl = 'https://crudcrud.com/api/937eab1dfb0743e381b90c5faaeb6cd6/Appointment';
+        const apiUrl = 'https://crudcrud.com/api/97ae29993076492eb077320b3cdd884e/Appointment';
 
         // Define a function to retrieve the data from the server
         function getData() {
@@ -46,6 +46,8 @@
                         });
                         row.insertCell().appendChild(editBtn);
                     });
+                    // Save the data to local storage
+                    localStorage.setItem('appointments', JSON.stringify(response.data));
                 })
                 .catch(error => console.log(error));
         }
@@ -69,17 +71,22 @@
                 .catch(error => console.log(error));
         }
 
-        // Define a function to delete an item from the server
+        // Define a function to delete an item from the server and local storage
         function deleteItem(itemId) {
             axios.delete(`${apiUrl}/${itemId}`)
                 .then(response => {
                     // Refresh the table data
                     getData();
-                })
+                    // Remove the item from local storage
+                    let appointments = JSON.parse(localStorage.getItem('appointments'));
+                    appointments = appointments.filter(item => item._id !== itemId);
+                    localStorage.setItem('appointments', JSON.stringify(appointments));
+                }) 
                 .catch(error => console.log(error));
         }
 
-        // Define a function to edit an item on the server
+
+        // Define a function to edit an item on the server and in local storage
         function editItem(item) {
             // Get the new values from the user
             const newName = prompt('Enter the new name:', item.name);
@@ -90,10 +97,22 @@
                 .then(response => {
                     // Refresh the table data
                     getData();
+                    // Update the item in local storage
+                    const appointments = JSON.parse(localStorage.getItem('appointments'));
+                    const updatedAppointments = appointments.map(appointment => {
+                        if (appointment._id === item._id) {
+                            appointment.name = newName;
+                            appointment.email = newEmail;
+                            appointment.phone = newPhone;
+                        }
+                        return appointment;
+                    });
+                    localStorage.setItem('appointments', JSON.stringify(updatedAppointments));
                 })
                 .catch(error => console.log(error));
         }
-        
+
+
 
         // Call the getData function on page load
         window.onload = getData;
@@ -124,4 +143,5 @@
         </div>
     </div>
 </body>
+
 </html>

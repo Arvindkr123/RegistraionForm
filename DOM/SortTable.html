@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sort table</title>
+</head>
+
+<body>
+    <button onclick="SortASC()" style="margin-right: 30px;">A-Z</button>
+    <button onclick="SortDSC()" style="margin-right: 30px;">Z-A</button>
+
+    <input type="text" id="searchBox" onkeyup="searchPeople()">
+    <table border="2">
+        <thead>
+            <tr>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>City</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tbody id="tb">
+
+        </tbody>
+    </table>
+    <script type="text/javascript">
+        const tbody = document.getElementById('tb');
+        const searchBox = document.getElementById('searchBox');
+        var pepole = [
+            {
+                "firstName": "praveen",
+                "lastName": "gubbala",
+                "age": 36,
+                "gender": "male",
+                "city": "hyd",
+                "salary": 10000,
+            },
+            {
+                "firstName": "srikanth",
+                "lastName": "gubbla",
+                "age": 32,
+                "gender": "male",
+                "city": "bangaluru",
+                "salary": 200000
+            },
+            {
+                "firstName": "Ajay",
+                "lastName": "kumar",
+                "age": 32,
+                "gender": "male",
+                "city": "Ghaziabad",
+                "salary": 200000
+            },
+            {
+                "firstName": "Vijay",
+                "lastName": "kumar",
+                "age": 32,
+                "gender": "male",
+                "city": "Bareliy",
+                "salary": 200000
+            },
+            {
+                "firstName": "Monica",
+                "lastName": "Tahkur",
+                "age": 32,
+                "gender": "Female",
+                "city": "Bareliy",
+                "salary": 200000
+            },
+            {
+                "firstName": "Sawan",
+                "lastName": "parajapati",
+                "age": 32,
+                "gender": "male",
+                "city": "Bareliy",
+                "salary": 200000
+            },
+            {
+                "firstName": "Arvind",
+                "lastName": "Thakur",
+                "age": 32,
+                "gender": "male",
+                "city": "Bareliy",
+                "salary": 200000
+            },
+            {
+                "firstName": "Herdeep",
+                "lastName": "Chauhan",
+                "age": 32,
+                "gender": "male",
+                "city": "Bareliy",
+                "salary": 200000
+            },
+            {
+                "firstName": "Narender",
+                "lastName": "Chauhan",
+                "age": 32,
+                "gender": "male",
+                "city": "Bareliy",
+                "salary": 200000
+            }
+        ];
+        createRow(pepole);
+        function SortASC() {
+            pepole.sort(function (a, b) {
+                var f1 = a.firstName.toLowerCase();
+                var f2 = b.firstName.toLowerCase();
+
+                if (f1 < f2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+
+                return 0;
+            });
+
+            createRow(pepole);
+        }
+
+
+        function SortDSC() {
+            pepole.sort(function (a, b) {
+                var f1 = a.firstName.toLowerCase();
+                var f2 = b.firstName.toLowerCase();
+
+                if (f1 < f2) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+
+                return 0;
+            });
+
+            createRow(pepole);
+        }
+
+        function searchPeople() {
+            var filterPeople = pepole.filter(function (person) {
+                return (person.firstName.toLowerCase().includes(searchBox.value.toLowerCase()));
+            })
+            createRow(filterPeople);
+        }
+
+        function createRow(arr) {
+            tbody.innerHTML = '';
+            arr.forEach(function (element) {
+                var row = document.createElement('tr');
+                var td1 = document.createElement('td')
+                td1.innerHTML = element.firstName;
+                var td2 = document.createElement('td')
+                td2.innerHTML = element.lastName;
+                var td3 = document.createElement('td')
+                td3.innerHTML = element.age;
+                var td4 = document.createElement('td')
+                td4.innerHTML = element.gender;
+                var td5 = document.createElement('td')
+                td5.innerHTML = element.city;
+                var td6 = document.createElement('td')
+                td6.innerHTML = element.salary;
+                row.appendChild(td1);
+                row.appendChild(td2);
+                row.appendChild(td3);
+                row.appendChild(td4);
+                row.appendChild(td5);
+                row.appendChild(td6);
+                tb.appendChild(row);
+            });
+        }
+
+    </script>
+</body>
+
+</html>

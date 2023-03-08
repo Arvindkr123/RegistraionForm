@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <form id="form">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="tel" id="phone" placeholder="Phone" required>
+        <input type="submit" value="Submit">
+    </form>
+    <ul id="list">
+    </ul>
+    <script>
+        const form = document.getElementById('form');
+        const apiUrl = 'https://crudcrud.com/api/404945b4047442e1ba8ef7f2114c92cb/users'
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
+        const phone = document.getElementById('phone');
+
+        // Load data from the API when the page loads
+        window.onload = () => {
+            loadData();
+        }
+
+        form.addEventListener('submit', saveToLocalStorageAndServer);
+
+        function saveToLocalStorageAndServer(e) {
+            e.preventDefault();
+            const obj = {
+                name: name.value,
+                email: email.value,
+                phone: phone.value
+            };
+
+            // Save to local storage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            users.push(obj);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Save to the API
+            axios.post(apiUrl, obj)
+                .then(res => {
+                    loadData();
+                    console.log(res);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
+            // Reset the form
+            name.value = '';
+            email.value = '';
+            phone.value = '';
+        }
+
+        function loadData() {
+            // Load from local storage
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+
+            // Add each user to the list
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${user.name}</span>
+                    <span>${user.email}</span>
+                    <span>${user.phone}</span>
+                    <button onclick="editData('${user._id}')">Edit</button>
+                    <button onclick="deleteData('${user._id}')">Delete</button>
+                `;
+                list.appendChild(li);
+            });
+
+            // Load from API
+            axios.get(apiUrl)
+                .then(res => {
+                    const users = res.data;
+                    const list = document.getElementById('list');
+                    list.innerHTML = '';
+
+                    // Add each user to the list
+                    users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <span>${user.name}</span>
+                            <span>${user.email}</span>
+                            <span>${user.phone}</span>
+                            <button onclick="editData('${user._id}')">Edit</button>
+                            <button onclick="deleteData('${user._id}')">Delete</button>
+                        `;
+                        list.appendChild(li);
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+
+        function editData(id) {
+            // Send a GET request to the server to get the data of the user with the given ID
+            axios.get(`${apiUrl}/${id}`)
+                .then(response => {
+                    const user = response.data;
+                    // Populate the form fields with the retrieved data
+                    name.value = user.name;
+                    email.value = user.email;
+                    phone.value = user.phone;
+                    // Change the form submission event listener to a PUT request to update the user data on the server
+                    form.removeEventListener('submit', saveTolocalStorageAndServer);
+                    form.addEventListener('submit', e => {
+                        e.preventDefault();
+                        axios.put(`${apiUrl}/${id}`, {
+                            name: name.value,
+                            email: email.value,
+                            phone: phone.value
+                        })
+                            .then(response => {
+                                // Update the user in the list
+                                const li = document.getElementById(`user-${id}`);
+                                li.textContent = `${response.data.name}, ${response.data.email}, ${response.data.phone}`;
+                                // Reset the form and event listener
+                                form.reset();
+                                form.removeEventListener('submit', updateData);
+                                form.addEventListener('submit', saveTolocalStorageAndServer);
+                            })
+                            .catch(error => console.error(error));
+                    });
+                })
+                .catch(error => console.error(error));
+        }
+
+
+        function deleteData(id) {
+            axios.delete(`${apiUrl}/${id}`)
+                .then(response => {
+                    // Remove the deleted item from the DOM
+                    const listItem = document.querySelector(`li[data-id='${id}']`);
+                    listItem.parentNode.removeChild(listItem);
+                })
+                .catch(error => console.error(error));
+        }
+
+    </script>
+</body>
+
+</html>
